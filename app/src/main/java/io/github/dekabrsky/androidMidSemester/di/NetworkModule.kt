@@ -1,17 +1,21 @@
 package io.github.dekabrsky.androidMidSemester.di
 
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import io.github.dekabrsky.androidMidSemester.data.api.EspnApi
 import io.github.dekabrsky.androidMidSemester.data.api.SStatsApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 private const val BASE_URL = "https://api.sstats.net/"
+private val SSTATS = named("sstats")
+private val ESPN = named("espn")
 
 val networkModule = module {
     single {
@@ -29,14 +33,23 @@ val networkModule = module {
             .addInterceptor(get<ChuckerInterceptor>())
             .build()
     }
-    single {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(get())
-            .addConverterFactory(
-                get<Json>().asConverterFactory("application/json".toMediaType())
-            )
-            .build()
+    single(SSTATS) {
+        createRetrofit(baseUrl = BASE_URL, client = get(), json = get())
     }
-    single<SStatsApi> { get<Retrofit>().create(SStatsApi::class.java) }
+    single(ESPN) {
+        createRetrofit(baseUrl = "https://site.api.espn.com/", client = get(), json = get())
+    }
+    single<SStatsApi> {
+        get<Retrofit>(SSTATS).create(SStatsApi::class.java)
+    }
+    single<EspnApi> {
+        get<Retrofit>(ESPN).create(EspnApi::class.java)
+    }
 }
+
+private fun createRetrofit(baseUrl: String, client: OkHttpClient, json: Json): Retrofit =
+    Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(client)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
