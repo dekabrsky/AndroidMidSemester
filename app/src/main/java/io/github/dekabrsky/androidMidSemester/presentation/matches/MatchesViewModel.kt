@@ -1,6 +1,5 @@
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
@@ -34,8 +33,6 @@ class MatchesViewModel(
     val state: StateFlow<MatchesUiState> =
         _state.asStateFlow()
 
-    private val cache = mutableMapOf<LocalDate, List<Match>>()
-
     init {
         load(LocalDate.now())
     }
@@ -57,38 +54,12 @@ class MatchesViewModel(
     }
 
     private fun load(date: LocalDate) {
-        cache[date]?.let { matches ->
-            Log.d(
-                "MatchesCache",
-                "CACHE HIT: $date, matches=${matches.size}"
-            )
-
-            _state.value = MatchesUiState.Content(
-                date,
-                matches
-            )
-
-            return
-        }
-
-        Log.d(
-            "MatchesCache",
-            "NETWORK REQUEST: $date"
-        )
-
         _state.value = MatchesUiState.Loading
 
         viewModelScope.launch {
             runCatching {
                 getMatches(date)
             }.onSuccess { matches ->
-
-                cache[date] = matches
-
-                Log.d(
-                    "MatchesCache",
-                    "SAVED TO CACHE: $date, matches=${matches.size}"
-                )
 
                 _state.value = MatchesUiState.Content(
                     date,

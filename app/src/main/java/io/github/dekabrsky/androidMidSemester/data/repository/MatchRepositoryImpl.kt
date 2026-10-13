@@ -11,20 +11,56 @@ class MatchRepositoryImpl(
     private val api: EspnApi,
 ) : MatchRepository {
 
+    private val cache = mutableMapOf<LocalDate, List<Match>>()
+
     override suspend fun matchesOn(date: LocalDate): List<Match> {
+
+        cache[date]?.let { matches ->
+            Log.d(
+                "MatchesCache",
+                "CACHE HIT: $date, matches=${matches.size}"
+            )
+
+            return matches
+        }
+
         val dateString = date.toString().replace("-", "")
+
+        Log.d(
+            "MatchesCache",
+            "NETWORK REQUEST: $date"
+        )
 
         Log.d(
             "ESPN_API",
             "GET https://site.api.espn.com/apis/site/v2/sports/soccer/rus.1/scoreboard?dates=$dateString"
         )
 
-        return api.gamesOn(dateString)
-            .events
-            .map { it.toMatch() }
+        val response = api.gamesOn(dateString)
+
+        Log.d(
+            "ESPN_API",
+            "EVENTS COUNT: ${response.events.size}"
+        )
+
+        val matches = response.events.map { it.toMatch() }
+
+        cache[date] = matches
+
+        Log.d(
+            "MatchesCache",
+            "SAVED TO CACHE: $date, matches=${matches.size}"
+        )
+
+        return matches
     }
 
     override suspend fun match(id: Long): Match {
+        Log.d(
+            "ESPN_API",
+            "GET https://site.api.espn.com/apis/site/v2/sports/soccer/rus.1/summary?event=$id"
+        )
+
         val event = api.game(id)
             .events
             .firstOrNull()
