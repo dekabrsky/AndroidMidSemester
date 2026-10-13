@@ -49,7 +49,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
 

@@ -10,8 +10,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-
+import io.github.dekabrsky.androidMidSemester.data.api.Api
 private const val BASE_URL = "https://api.sstats.net/"
+private const val ESPN_BASE_URL = "https://site.api.espn.com/"
 
 val networkModule = module {
     single {
@@ -39,4 +40,7 @@ val networkModule = module {
             .build()
     }
     single<SStatsApi> { get<Retrofit>().create(SStatsApi::class.java) }
+    single<Api> {
+        get<Retrofit>().newBuilder().baseUrl(ESPN_BASE_URL).build().create(Api::class.java)
+    }
 }
