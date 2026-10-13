@@ -10,4 +10,18 @@
     <string name="match_details_round">Тур</string>
     <string name="match_details_close">Закрыть</string>
     <string name="match_details_team_logo">Логотип команды %1$s</string>
+    <string name="teams_title">Команды России</string>
+    <string name="teams_back">Назад к матчам</string>
+    <string name="teams_reset">Сбросить</string>
+    <string name="teams_apply">Показать матчи</string>
+    <string name="teams_retry">Повторить</string>
+    <string name="teams_search">Поиск команды</string>
+    <string name="teams_selection_count">Выбрано команд: %1$d</string>
+    <string name="teams_empty_selection_hint">Если ничего не выбрано, показываются матчи всех российских команд.</string>
+    <string name="teams_no_results">Команды не найдены</string>
+    <string name="matches_all_russian_teams">Все команды России</string>
+    <string name="matches_choose_teams">Выбрать команды</string>
+    <string name="matches_empty_title">Матчей нет</string>
+    <string name="matches_empty_selected">На эту дату нет матчей выбранных команд.</string>
+    <string name="matches_empty_all">На эту дату нет матчей российских команд.</string>
 </resources>
