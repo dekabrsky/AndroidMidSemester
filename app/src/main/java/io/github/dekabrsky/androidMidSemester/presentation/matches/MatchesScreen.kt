@@ -1,6 +1,7 @@
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,17 +40,24 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onTeamsClick: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val selectedIds by viewModel.selectedTeamIds.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
-            MatchesTopBar(
-                state = state,
-                onPreviousDay = viewModel::previousDay,
-                onNextDay = viewModel::nextDay,
-            )
+            Column {
+                MatchesTopBar(
+                    state = state,
+                    onPreviousDay = viewModel::previousDay,
+                    onNextDay = viewModel::nextDay,
+                )
+                TextButton(onClick = onTeamsClick, modifier = Modifier.align(Alignment.End)) {
+                    Text(if (selectedIds.isEmpty()) "Выбрать команды" else "Команды (${selectedIds.size})")
+                }
+            }
         },
     ) { innerPadding ->
         Box(
@@ -59,12 +68,15 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                is MatchesUiState.Content -> {
+                    if (current.matches.isEmpty()) {
+                        Text("На эту дату матчей нет", Modifier.align(Alignment.Center))
+                    } else {
+                        LazyColumn {
+                            items(current.matches, key = { it.id }) { match ->
+                                MatchListItem(match = match, onClick = onMatchClick)
+                            }
+                        }
                     }
                 }
             }
