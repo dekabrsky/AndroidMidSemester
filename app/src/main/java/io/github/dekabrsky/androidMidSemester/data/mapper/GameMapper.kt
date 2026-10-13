@@ -1,20 +1,10 @@
 package io.github.dekabrsky.androidMidSemester.data.mapper
 
 import io.github.dekabrsky.androidMidSemester.data.api.dto.GameDto
-import io.github.dekabrsky.androidMidSemester.data.api.dto.TeamDto
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.domain.model.MatchStatus
-import io.github.dekabrsky.androidMidSemester.domain.model.Team
 import java.time.Instant
 import java.time.ZoneId
-
-private const val LOGO_URL_PATTERN = "https://sstats.net/assets/logos/%d.png"
-
-private fun toTeam(dto: TeamDto): Team = Team(
-    id = dto.id,
-    name = dto.name,
-    logoUrl = LOGO_URL_PATTERN.format(dto.id),
-)
 
 /**
  * DTO -> доменная модель.
@@ -24,8 +14,8 @@ private fun toTeam(dto: TeamDto): Team = Team(
  */
 fun GameDto.toMatch(): Match = Match(
     id = id,
-    home = toTeam(homeTeam),
-    away = toTeam(awayTeam),
+    home = homeTeam.toTeam(),
+    away = awayTeam.toTeam(),
     homeScore = homeResult,
     awayScore = awayResult,
     status = if (statusName == "Finished") MatchStatus.FINISHED else MatchStatus.SCHEDULED,
