@@ -4,6 +4,7 @@ import io.github.dekabrsky.androidMidSemester.data.api.SStatsApi
 import io.github.dekabrsky.androidMidSemester.data.api.dto.GameDto
 import io.github.dekabrsky.androidMidSemester.data.api.dto.ListEnvelope
 import io.github.dekabrsky.androidMidSemester.data.api.dto.SingleEnvelope
+import io.github.dekabrsky.androidMidSemester.data.api.dto.TeamDto
 import io.github.dekabrsky.androidMidSemester.data.cache.MatchesMemoryCache
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -35,6 +36,9 @@ private class CountingApi : SStatsApi {
         requestsByDate[date] = requestsByDate.getOrDefault(date, 0) + 1
         return ListEnvelope(status = "success")
     }
+
+    override suspend fun teams(country: String): ListEnvelope<TeamDto> =
+        ListEnvelope(status = "success")
 
     override suspend fun game(id: Long): SingleEnvelope<GameDto> =
         SingleEnvelope(status = "success")
