@@ -29,6 +29,7 @@ import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.ErrorState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.LoadingState
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -45,7 +46,7 @@ fun MatchesScreen(
     Scaffold(
         topBar = {
             MatchesTopBar(
-                state = state,
+                date = state.date,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
             )
@@ -57,7 +58,7 @@ fun MatchesScreen(
                 .padding(innerPadding),
         ) {
             when (val current = state) {
-                MatchesUiState.Loading -> LoadingState()
+                is MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
                 is MatchesUiState.Content -> LazyColumn {
                     items(current.matches, key = { it.id }) { match ->
@@ -74,12 +75,10 @@ fun MatchesScreen(
 
 @Composable
 private fun MatchesTopBar(
-    state: MatchesUiState,
+    date: LocalDate,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
 ) {
-    val date = (state as? MatchesUiState.Content)?.date
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +93,7 @@ private fun MatchesTopBar(
             )
         }
         Text(
-            text = date?.format(TITLE_DATE_FORMAT) ?: "",
+            text = date.format(TITLE_DATE_FORMAT),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
