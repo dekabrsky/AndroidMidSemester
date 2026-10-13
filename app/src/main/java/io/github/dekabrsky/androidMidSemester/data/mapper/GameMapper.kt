@@ -10,10 +10,10 @@ import java.time.ZoneId
 
 private const val LOGO_URL_PATTERN = "https://sstats.net/assets/logos/%d.png"
 
-private fun toTeam(dto: TeamDto): Team = Team(
-    id = dto.id,
-    name = dto.name,
-    logoUrl = LOGO_URL_PATTERN.format(dto.id),
+fun TeamDto.toTeam(): Team = Team(
+    id = id,
+    name = name,
+    logoUrl = logoUrl ?: LOGO_URL_PATTERN.format(id),
 )
 
 /**
@@ -24,8 +24,8 @@ private fun toTeam(dto: TeamDto): Team = Team(
  */
 fun GameDto.toMatch(): Match = Match(
     id = id,
-    home = toTeam(homeTeam),
-    away = toTeam(awayTeam),
+    home = homeTeam.toTeam(),
+    away = awayTeam.toTeam(),
     homeScore = homeResult,
     awayScore = awayResult,
     status = if (statusName == "Finished") MatchStatus.FINISHED else MatchStatus.SCHEDULED,
