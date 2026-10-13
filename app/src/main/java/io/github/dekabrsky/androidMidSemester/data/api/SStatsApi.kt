@@ -15,4 +15,8 @@ interface SStatsApi {
 
     @GET("Games/{id}")
     suspend fun game(@Path("id") id: Long): SingleEnvelope<GameDto>
+
+    companion object {
+        const val BASE_URL = "https://api.sstats.net/"
+    }
 }

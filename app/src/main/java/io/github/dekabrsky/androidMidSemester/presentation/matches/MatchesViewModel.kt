@@ -2,6 +2,7 @@ package io.github.dekabrsky.androidMidSemester.presentation.matches
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.dekabrsky.androidMidSemester.data.repository.MatchesCache
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.domain.usecase.GetMatchesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ sealed interface MatchesUiState {
 
 class MatchesViewModel(
     private val getMatches: GetMatchesUseCase,
+    private val cache: MatchesCache
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MatchesUiState>(MatchesUiState.Loading)
@@ -38,10 +40,21 @@ class MatchesViewModel(
     }
 
     private fun load(date: LocalDate) {
+        val cached = cache.get(date)
+        if (cached != null){
+            _state.value = MatchesUiState.Content(date,cached)
+            return
+        }
+
         _state.value = MatchesUiState.Loading
         viewModelScope.launch {
             runCatching { getMatches(date) }
-                .onSuccess { matches -> _state.value = MatchesUiState.Content(date, matches) }
+                .onSuccess { matches ->
+                    run {
+                        cache.put(date, matches)
+                        _state.value = MatchesUiState.Content(date, matches)
+                    }
+                }
                 .onFailure { e ->
                     _state.value = MatchesUiState.Error(
                         e.message ?: "Не удалось загрузить матчи"
