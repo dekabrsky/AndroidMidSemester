@@ -15,7 +15,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +40,14 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onOpenTeamsFilter: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
 
     Scaffold(
         topBar = {
@@ -48,6 +55,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onOpenTeamsFilter = onOpenTeamsFilter,
             )
         },
     ) { innerPadding ->
@@ -77,6 +85,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onOpenTeamsFilter: () -> Unit,
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -106,6 +115,9 @@ private fun MatchesTopBar(
                 painter = painterResource(R.drawable.ic_arrow_right),
                 contentDescription = "Следующий день",
             )
+        }
+        TextButton(onClick = onOpenTeamsFilter) {
+            Text("Команды")
         }
     }
 }

@@ -37,6 +37,11 @@ class MatchesViewModel(
         load(current.plusDays(1))
     }
 
+    fun refresh() {
+        val current = (state.value as? MatchesUiState.Content)?.date ?: LocalDate.now()
+        load(current)
+    }
+
     private fun load(date: LocalDate) {
         _state.value = MatchesUiState.Loading
         viewModelScope.launch {

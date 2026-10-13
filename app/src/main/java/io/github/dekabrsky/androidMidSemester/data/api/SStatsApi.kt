@@ -2,6 +2,7 @@ package io.github.dekabrsky.androidMidSemester.data.api
 
 import io.github.dekabrsky.androidMidSemester.data.api.dto.GameDto
 import io.github.dekabrsky.androidMidSemester.data.api.dto.ListEnvelope
+import io.github.dekabrsky.androidMidSemester.data.api.dto.SStatsTeamDto
 import io.github.dekabrsky.androidMidSemester.data.api.dto.SingleEnvelope
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -9,10 +10,13 @@ import retrofit2.http.Query
 
 interface SStatsApi {
 
-    /** @param date дата в формате "yyyy-MM-dd"; offset/limit захардкожены — не тянуть весь список дня */
-    @GET("Games/list?offset=0&limit=10")
+    /** @param date дата в формате "yyyy-MM-dd" */
+    @GET("Games/list?offset=0&limit=100")
     suspend fun gamesOn(@Query("Date") date: String): ListEnvelope<GameDto>
 
     @GET("Games/{id}")
     suspend fun game(@Path("id") id: Long): SingleEnvelope<GameDto>
+
+    @GET("Teams/list")
+    suspend fun teamsByCountry(@Query("Country") country: String = "Russia"): ListEnvelope<SStatsTeamDto>
 }
