@@ -1,9 +1,9 @@
 package io.github.dekabrsky.androidMidSemester.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -12,12 +12,17 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.presentation.details.MatchDetailsDialog
 import io.github.dekabrsky.androidMidSemester.presentation.matches.MatchesScreen
+import io.github.dekabrsky.androidMidSemester.presentation.team.TeamSelectionScreen
+import org.koin.androidx.compose.koinViewModel
 
 /** Маркер-интерфейс для всех узлов навигации приложения. */
 interface Route
 
 /** Список матчей — стартовый узел. */
 data object MatchesList : Route
+
+/** Экран выбора любимых команд. */
+data object TeamSelection : Route
 
 /** Детали матча — показывается в диалоговом окне (DialogSceneStrategy). */
 data class MatchDetails(val match: Match) : Route
@@ -50,6 +55,13 @@ fun MatchesNavRoot(navigator: Navigator = remember { Navigator(MatchesList) }) {
             entry<MatchesList> {
                 MatchesScreen(
                     onMatchClick = { match -> navigator.goTo(MatchDetails(match)) },
+                    onSelectTeamsClick = { navigator.goTo(TeamSelection) },
+                )
+            }
+            entry<TeamSelection> {
+                TeamSelectionScreen(
+                    viewModel = koinViewModel(),
+                    onNavigateBack = navigator::goBack,
                 )
             }
             entry<MatchDetails>(

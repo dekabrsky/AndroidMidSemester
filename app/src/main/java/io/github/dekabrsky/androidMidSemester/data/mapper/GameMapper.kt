@@ -11,9 +11,9 @@ import java.time.ZoneId
 private const val LOGO_URL_PATTERN = "https://sstats.net/assets/logos/%d.png"
 
 private fun toTeam(dto: TeamDto): Team = Team(
-    id = dto.id,
-    name = dto.name,
-    logoUrl = LOGO_URL_PATTERN.format(dto.id),
+    id = dto.id ?: 0L,
+    name = dto.name.orEmpty(),
+    logoUrl = dto.id?.let { LOGO_URL_PATTERN.format(it) } ?: dto.logoUrl ?: dto.logo ?: dto.badge,
 )
 
 /**
