@@ -47,8 +47,16 @@ class MatchesViewModel(
                         val filtered = if (selectedIds.isEmpty()) {
                             matches
                         } else {
+                            val selectedNames = teamRepository.getSelectedTeamNames()
                             matches.filter { match ->
-                                selectedIds.contains(match.home.id) || selectedIds.contains(match.away.id)
+                                val homeName = match.home.name.lowercase()
+                                val awayName = match.away.name.lowercase()
+                                selectedIds.contains(match.home.id) ||
+                                        selectedIds.contains(match.away.id) ||
+                                        selectedNames.any { selected ->
+                                            homeName.contains(selected) || selected.contains(homeName) ||
+                                                    awayName.contains(selected) || selected.contains(awayName)
+                                        }
                             }
                         }
                         MatchesUiState.Content(date = date, matches = filtered)

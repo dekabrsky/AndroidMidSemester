@@ -39,4 +39,5 @@ data class SeasonDto(
 @Serializable
 data class LeagueDto(
     val name: String,
+    val country: CountryDto? = null,
 )

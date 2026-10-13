@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class TeamRepositoryImpl(
-    private val api: SStatsApi
+    private val api: SStatsApi,
 ) : TeamRepository {
 
     private val _selectedTeamIds = MutableStateFlow<Set<Long>>(emptySet())
@@ -26,7 +26,7 @@ class TeamRepositoryImpl(
                 Team(
                     id = id,
                     name = dto.name.orEmpty(),
-                    logoUrl = dto.logoUrl ?: dto.logo ?: dto.badge
+                    logoUrl = dto.logoUrl ?: dto.logo ?: dto.badge ?: "https://sstats.net/assets/logos/$id.png",
                 )
             }
         }
@@ -43,5 +43,14 @@ class TeamRepositoryImpl(
 
     override fun clearSelection() {
         _selectedTeamIds.value = emptySet()
+    }
+
+    override fun getSelectedTeamNames(): Set<String> {
+        val selected = _selectedTeamIds.value
+        if (selected.isEmpty()) return emptySet()
+        return cachedTeams
+            ?.filter { selected.contains(it.id) }
+            ?.map { it.name.lowercase() }
+            ?.toSet() ?: emptySet()
     }
 }

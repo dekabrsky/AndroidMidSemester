@@ -8,4 +8,5 @@ interface TeamRepository {
     suspend fun getTeams(country: String = "Russia"): List<Team>
     fun toggleTeamSelection(teamId: Long)
     fun clearSelection()
+    fun getSelectedTeamNames(): Set<String>
 }
