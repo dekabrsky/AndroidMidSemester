@@ -1,0 +1,229 @@
+{
+  "leagues": [
+    {
+      "name": "Russian Premier League"
+    }
+  ],
+  "events": [
+    {
+      "id": "401879832",
+      "date": "2026-10-18T11:00Z",
+      "name": "Akhmat Grozny at Zenit St Petersburg",
+      "competitions": [
+        {
+          "date": "2026-10-18T11:00Z",
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Sun, October 18th at 7:00 AM EDT",
+              "shortDetail": "Scheduled"
+            }
+          },
+          "competitors": [
+            {
+              "id": "2533",
+              "homeAway": "home",
+              "score": "0",
+              "team": {
+                "id": "2533",
+                "displayName": "Zenit St Petersburg",
+                "name": "Zenit St Petersburg",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2533.png"
+              }
+            },
+            {
+              "id": "2991",
+              "homeAway": "away",
+              "score": "0",
+              "team": {
+                "id": "2991",
+                "displayName": "Akhmat Grozny",
+                "name": "Akhmat Grozny",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2991.png"
+              }
+            }
+          ],
+          "venue": {
+            "id": "10447",
+            "fullName": "Saint Petersburg Stadium",
+            "address": {
+              "city": "Saint Petersburg",
+              "country": "Russia"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "401879839",
+      "date": "2026-10-18T13:15Z",
+      "name": "CSKA Moscow at Dinamo Moscow",
+      "competitions": [
+        {
+          "date": "2026-10-18T13:15Z",
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Sun, October 18th at 9:15 AM EDT",
+              "shortDetail": "Scheduled"
+            }
+          },
+          "competitors": [
+            {
+              "id": "596",
+              "homeAway": "home",
+              "score": "0",
+              "team": {
+                "id": "596",
+                "displayName": "Dinamo Moscow",
+                "name": "Dinamo Moscow",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/596.png"
+              }
+            },
+            {
+              "id": "1963",
+              "homeAway": "away",
+              "score": "0",
+              "team": {
+                "id": "1963",
+                "displayName": "CSKA Moscow",
+                "name": "CSKA Moscow",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1963.png"
+              }
+            }
+          ],
+          "venue": {
+            "id": "8111",
+            "fullName": "VTB Arena",
+            "address": {
+              "city": "Moscow",
+              "country": "Russia"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "401879838",
+      "date": "2026-10-18T15:30Z",
+      "name": "Rubin Kazan at Spartak Moscow",
+      "competitions": [
+        {
+          "date": "2026-10-18T15:30Z",
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Sun, October 18th at 11:30 AM EDT",
+              "shortDetail": "Scheduled"
+            }
+          },
+          "competitors": [
+            {
+              "id": "1941",
+              "homeAway": "home",
+              "score": "0",
+              "team": {
+                "id": "1941",
+                "displayName": "Spartak Moscow",
+                "name": "Spartak Moscow",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1941.png"
+              }
+            },
+            {
+              "id": "3851",
+              "homeAway": "away",
+              "score": "0",
+              "team": {
+                "id": "3851",
+                "displayName": "Rubin Kazan",
+                "name": "Rubin Kazan",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3851.png"
+              }
+            }
+          ],
+          "venue": {
+            "id": "6025",
+            "fullName": "Lukoil Arena",
+            "address": {
+              "city": "Moscow",
+              "country": "Russia"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "401879835",
+      "date": "2026-10-18T17:45Z",
+      "name": "Rostov at FC Baltika Kaliningrad",
+      "competitions": [
+        {
+          "date": "2026-10-18T17:45Z",
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Sun, October 18th at 1:45 PM EDT",
+              "shortDetail": "Scheduled"
+            }
+          },
+          "competitors": [
+            {
+              "id": "21949",
+              "homeAway": "home",
+              "score": "0",
+              "team": {
+                "id": "21949",
+                "displayName": "FC Baltika Kaliningrad",
+                "name": "FC Baltika Kaliningrad",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21949.png"
+              }
+            },
+            {
+              "id": "3852",
+              "homeAway": "away",
+              "score": "0",
+              "team": {
+                "id": "3852",
+                "displayName": "Rostov",
+                "name": "Rostov",
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3852.png"
+              }
+            }
+          ],
+          "venue": {
+            "id": "10657",
+            "fullName": "Kaliningrad Stadium",
+            "address": {
+              "city": "Kaliningrad",
+              "country": "Russia"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
