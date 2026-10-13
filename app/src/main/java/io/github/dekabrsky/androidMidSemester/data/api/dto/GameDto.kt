@@ -19,6 +19,14 @@ data class GameDto(
 data class TeamDto(
     val id: Long,
     val name: String,
+    val logoUrl: String? = null,
+    val country: CountryDto? = null,
+)
+
+@Serializable
+data class CountryDto(
+    val code: String,
+    val name: String,
 )
 
 @Serializable

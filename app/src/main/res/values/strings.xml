@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Футбольный дайджест</string>
+    <string name="teams_open">Команды</string>
+    <string name="teams_title">Команды</string>
+    <string name="teams_back">Назад</string>
+    <string name="teams_reset">Сбросить</string>
+    <string name="teams_all">Все</string>
+    <string name="teams_selected">Выбранные</string>
+    <string name="teams_search">Поиск команды</string>
+    <string name="teams_retry">Повторить</string>
+    <string name="teams_empty">Команды не найдены</string>
+    <string name="teams_no_selection">Вы пока не выбрали команды</string>
+    <string name="teams_all_hint">Отметьте команды, матчи которых хотите видеть. Если ничего не выбрано — показываются все матчи.</string>
+    <string name="teams_selected_count">Выбрано команд: %1$d</string>
+    <string name="matches_empty_day">На эту дату матчей нет</string>
+    <string name="matches_empty_filtered">На эту дату нет матчей выбранных команд</string>
+    <string name="error_title">Не удалось загрузить данные</string>
+    <string name="error_connection">Не удалось подключиться к серверу. Проверьте интернет.</string>
+    <string name="error_timeout">Сервер не ответил вовремя. Попробуйте ещё раз.</string>
+    <string name="error_network">Соединение прервано. Проверьте интернет.</string>
+    <string name="error_loading">Не удалось получить данные. Попробуйте позже.</string>
 </resources>
