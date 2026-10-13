@@ -1,5 +1,6 @@
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
@@ -38,11 +39,16 @@ class MatchesViewModel(
     }
 
     private fun load(date: LocalDate) {
+        Log.d("VIEWMODEL", "Загрузка матчей на дату: $date")
         _state.value = MatchesUiState.Loading
         viewModelScope.launch {
             runCatching { getMatches(date) }
-                .onSuccess { matches -> _state.value = MatchesUiState.Content(date, matches) }
+                .onSuccess { matches ->
+                    Log.d("VIEWMODEL", "Успех! Матчей: ${matches.size}")
+                    _state.value = MatchesUiState.Content(date, matches)
+                }
                 .onFailure { e ->
+                    Log.e("VIEWMODEL", "Ошибка загрузки: ${e.message}", e)
                     _state.value = MatchesUiState.Error(
                         e.message ?: "Не удалось загрузить матчи"
                     )
