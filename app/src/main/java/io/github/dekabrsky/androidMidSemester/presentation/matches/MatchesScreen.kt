@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.dekabrsky.androidMidSemester.R
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
+import io.github.dekabrsky.androidMidSemester.presentation.ui.common.EmptyState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.ErrorState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.LoadingState
 import org.koin.androidx.compose.koinViewModel
@@ -38,6 +39,7 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onOpenTeams: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +50,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onOpenTeams = onOpenTeams,
             )
         },
     ) { innerPadding ->
@@ -59,12 +62,16 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                is MatchesUiState.Content -> if (current.matches.isEmpty()) {
+                    EmptyState(message = "На эту дату матчей нет")
+                } else {
+                    LazyColumn {
+                        items(current.matches, key = { it.id }) { match ->
+                            MatchListItem(
+                                match = match,
+                                onClick = onMatchClick,
+                            )
+                        }
                     }
                 }
             }
@@ -77,6 +84,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onOpenTeams: () -> Unit,
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -105,6 +113,12 @@ private fun MatchesTopBar(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_right),
                 contentDescription = "Следующий день",
+            )
+        }
+        IconButton(onClick = onOpenTeams) {
+            Icon(
+                painter = painterResource(R.drawable.ic_teams),
+                contentDescription = "Выбор команд",
             )
         }
     }

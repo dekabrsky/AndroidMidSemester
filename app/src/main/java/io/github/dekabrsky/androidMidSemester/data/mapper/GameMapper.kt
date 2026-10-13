@@ -8,7 +8,7 @@ import io.github.dekabrsky.androidMidSemester.domain.model.Team
 import java.time.Instant
 import java.time.ZoneId
 
-private const val LOGO_URL_PATTERN = "https://sstats.net/assets/logos/%d.png"
+internal const val LOGO_URL_PATTERN = "https://sstats.net/assets/logos/%d.png"
 
 private fun toTeam(dto: TeamDto): Team = Team(
     id = dto.id,
