@@ -1,18 +1,71 @@
 package io.github.dekabrsky.androidMidSemester.data.repository
 
-import io.github.dekabrsky.androidMidSemester.data.api.SStatsApi
+import android.util.Log
+import io.github.dekabrsky.androidMidSemester.data.api.EspnApi
 import io.github.dekabrsky.androidMidSemester.data.mapper.toMatch
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.domain.repository.MatchRepository
 import java.time.LocalDate
 
 class MatchRepositoryImpl(
-    private val api: SStatsApi,
+    private val api: EspnApi,
 ) : MatchRepository {
 
-    override suspend fun matchesOn(date: LocalDate): List<Match> =
-        api.gamesOn(date.toString()).data.map { it.toMatch() }
+    private val cache = mutableMapOf<LocalDate, List<Match>>()
 
-    override suspend fun match(id: Long): Match =
-        api.game(id).data?.toMatch() ?: throw NoSuchElementException("Матч $id не найден")
+    override suspend fun matchesOn(date: LocalDate): List<Match> {
+
+        cache[date]?.let { matches ->
+            Log.d(
+                "MatchesCache",
+                "CACHE HIT: $date, matches=${matches.size}"
+            )
+
+            return matches
+        }
+
+        val dateString = date.toString().replace("-", "")
+
+        Log.d(
+            "MatchesCache",
+            "NETWORK REQUEST: $date"
+        )
+
+        Log.d(
+            "ESPN_API",
+            "GET https://site.api.espn.com/apis/site/v2/sports/soccer/rus.1/scoreboard?dates=$dateString"
+        )
+
+        val response = api.gamesOn(dateString)
+
+        Log.d(
+            "ESPN_API",
+            "EVENTS COUNT: ${response.events.size}"
+        )
+
+        val matches = response.events.map { it.toMatch() }
+
+        cache[date] = matches
+
+        Log.d(
+            "MatchesCache",
+            "SAVED TO CACHE: $date, matches=${matches.size}"
+        )
+
+        return matches
+    }
+
+    override suspend fun match(id: Long): Match {
+        Log.d(
+            "ESPN_API",
+            "GET https://site.api.espn.com/apis/site/v2/sports/soccer/rus.1/summary?event=$id"
+        )
+
+        val event = api.game(id)
+            .events
+            .firstOrNull()
+            ?: throw NoSuchElementException("Матч $id не найден")
+
+        return event.toMatch()
+    }
 }
