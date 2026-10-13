@@ -5,5 +5,10 @@ import io.github.dekabrsky.androidMidSemester.domain.repository.MatchRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<MatchRepository> { MatchRepositoryImpl(get()) }
+    single<MatchRepository> {
+        MatchRepositoryImpl(
+            api = get(),
+            scope = get(ApplicationScope),
+        )
+    }
 }
