@@ -57,7 +57,7 @@ fun MatchesScreen(
                 .padding(innerPadding),
         ) {
             when (val current = state) {
-                MatchesUiState.Loading -> LoadingState()
+                is MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
                 is MatchesUiState.Content -> LazyColumn {
                     items(current.matches, key = { it.id }) { match ->
@@ -78,7 +78,7 @@ private fun MatchesTopBar(
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
 ) {
-    val date = (state as? MatchesUiState.Content)?.date
+    val date = state.date
 
     Row(
         modifier = Modifier
@@ -94,7 +94,7 @@ private fun MatchesTopBar(
             )
         }
         Text(
-            text = date?.format(TITLE_DATE_FORMAT) ?: "",
+            text = date.format(TITLE_DATE_FORMAT),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
