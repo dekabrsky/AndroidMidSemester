@@ -10,22 +10,16 @@ import java.time.ZoneId
 
 private const val LOGO_URL_PATTERN = "https://sstats.net/assets/logos/%d.png"
 
-private fun toTeam(dto: TeamDto): Team = Team(
-    id = dto.id,
-    name = dto.name,
-    logoUrl = LOGO_URL_PATTERN.format(dto.id),
+fun TeamDto.toTeam(): Team = Team(
+    id = id,
+    name = name,
+    logoUrl = LOGO_URL_PATTERN.format(id),
 )
 
-/**
- * DTO -> доменная модель.
- * - Промежуточные статусы ("Second Half" и т.п.) считаем несыгранным матчем,
- *   но текущий счёт live-игры при этом показываем.
- * - null в счёте означает, что матч ещё не начался.
- */
 fun GameDto.toMatch(): Match = Match(
     id = id,
-    home = toTeam(homeTeam),
-    away = toTeam(awayTeam),
+    home = homeTeam.toTeam(),
+    away = awayTeam.toTeam(),
     homeScore = homeResult,
     awayScore = awayResult,
     status = if (statusName == "Finished") MatchStatus.FINISHED else MatchStatus.SCHEDULED,
