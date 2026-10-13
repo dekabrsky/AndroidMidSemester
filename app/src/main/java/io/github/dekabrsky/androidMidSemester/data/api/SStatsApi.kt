@@ -7,7 +7,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface SStatsApi {
+// Имя контракта сохранено для совместимости с существующим DI.
+// Retrofit поддерживает методы родительского интерфейса с абсолютными URL ESPN.
+interface SStatsApi : EspnApi {
 
     /** @param date дата в формате "yyyy-MM-dd"; offset/limit захардкожены — не тянуть весь список дня */
     @GET("Games/list?offset=0&limit=10")
