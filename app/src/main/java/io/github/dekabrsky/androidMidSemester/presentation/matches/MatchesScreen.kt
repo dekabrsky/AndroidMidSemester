@@ -15,7 +15,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.dekabrsky.androidMidSemester.R
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.ErrorState
@@ -38,9 +43,18 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onTeamsClick: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, viewModel) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.refreshSelectedTeams()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     Scaffold(
         topBar = {
@@ -48,6 +62,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onTeamsClick = onTeamsClick,
             )
         },
     ) { innerPadding ->
@@ -59,12 +74,16 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
+                is MatchesUiState.Content -> if (current.matches.isEmpty()) {
+                    Text(
+                        text = if (viewModel.selectedTeamIds.value.isEmpty()) "На эту дату матчей нет" else "Выбранные команды в этот день не играют",
+                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                } else LazyColumn {
                     items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                        MatchListItem(match = match, onClick = onMatchClick)
                     }
                 }
             }
@@ -77,6 +96,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onTeamsClick: () -> Unit,
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -107,5 +127,6 @@ private fun MatchesTopBar(
                 contentDescription = "Следующий день",
             )
         }
+        TextButton(onClick = onTeamsClick) { Text("Команды") }
     }
 }

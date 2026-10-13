@@ -11,32 +11,43 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-private const val BASE_URL = "https://api.sstats.net/"
+private const val S_STATS_BASE_URL = "https://api.sstats.net/"
 
 val networkModule = module {
+
     single {
-        Json { ignoreUnknownKeys = true }
+        Json {
+            ignoreUnknownKeys = true
+        }
     }
+
     single {
-        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
     }
+
     single {
         ChuckerInterceptor.Builder(androidContext()).build()
     }
+
     single {
         OkHttpClient.Builder()
             .addInterceptor(get<HttpLoggingInterceptor>())
             .addInterceptor(get<ChuckerInterceptor>())
             .build()
     }
-    single {
+
+    single<SStatsApi> {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(S_STATS_BASE_URL)
             .client(get())
             .addConverterFactory(
-                get<Json>().asConverterFactory("application/json".toMediaType())
+                get<Json>().asConverterFactory(
+                    "application/json".toMediaType()
+                )
             )
             .build()
+            .create(SStatsApi::class.java)
     }
-    single<SStatsApi> { get<Retrofit>().create(SStatsApi::class.java) }
 }
