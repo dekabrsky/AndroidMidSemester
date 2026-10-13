@@ -1,11 +1,10 @@
 package io.github.dekabrsky.androidMidSemester.data.repository
 
 import io.github.dekabrsky.androidMidSemester.data.api.EspnApi
+import io.github.dekabrsky.androidMidSemester.data.cache.InMemoryMatchCache
 import io.github.dekabrsky.androidMidSemester.data.mapper.toEspnMatch
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.domain.repository.MatchRepository
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -13,25 +12,19 @@ class EspnMatchRepositoryImpl(
     private val api: EspnApi,
 ) : MatchRepository {
 
-    private val matchesByDate = mutableMapOf<LocalDate, List<Match>>()
-    private val matchesById = mutableMapOf<Long, Match>()
-    private val cacheMutex = Mutex()
+    private val cache = InMemoryMatchCache()
 
-    override suspend fun matchesOn(date: LocalDate): List<Match> = cacheMutex.withLock {
-        matchesByDate[date] ?: api.scoreboard(date.format(ESPN_DATE_FORMAT)).let { response ->
-            val league = response.leagues.firstOrNull()?.name.orEmpty()
-            response.events.map { it.toEspnMatch(league) }
-                .also { matches ->
-                    matchesByDate[date] = matches
-                    matches.forEach { matchesById[it.id] = it }
-                }
+    override suspend fun matchesOn(date: LocalDate): List<Match> =
+        cache.matchesOn(date) {
+            api.scoreboard(date.format(ESPN_DATE_FORMAT)).let { response ->
+                val league = response.leagues.firstOrNull()?.name.orEmpty()
+                response.events.map { it.toEspnMatch(league) }
+            }
         }
-    }
 
-    override suspend fun match(id: Long): Match = cacheMutex.withLock {
-        matchesById[id] ?: api.summary(id.toString()).header?.let { event ->
+    override suspend fun match(id: Long): Match = cache.match(id) {
+        api.summary(id.toString()).header?.let { event ->
             event.toEspnMatch(leagueName = "Russian Premier League")
-                .also { matchesById[id] = it }
         } ?: throw NoSuchElementException("Матч $id не найден")
     }
 
