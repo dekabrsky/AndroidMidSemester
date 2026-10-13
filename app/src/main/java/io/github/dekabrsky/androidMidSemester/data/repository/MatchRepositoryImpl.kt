@@ -12,9 +12,12 @@ class MatchRepositoryImpl(
     private val cache: MatchCache,
 ) : MatchRepository {
 
-    override suspend fun matchesOn(date: LocalDate): List<Match> =
-        cache.get(date) ?: api.gamesOn(date.toString()).data.map { it.toMatch() }
-            .also { cache.put(date, it) }
+    override suspend fun matchesOn(date: LocalDate, teamIds: Set<Long>): List<Match> =
+        cache.get(date, teamIds) ?: api.gamesOn(
+            date = date.toString(),
+            teamIds = teamIds.takeIf { it.isNotEmpty() }?.sorted()?.joinToString(","),
+        ).data.map { it.toMatch() }
+            .also { cache.put(date, teamIds, it) }
 
     override suspend fun match(id: Long): Match =
         api.game(id).data?.toMatch() ?: throw NoSuchElementException("Матч $id не найден")

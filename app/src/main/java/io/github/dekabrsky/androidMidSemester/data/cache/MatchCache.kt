@@ -4,11 +4,13 @@ import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import java.time.LocalDate
 
 class MatchCache {
-    private val matches = mutableMapOf<LocalDate, List<Match>>()
+    private data class Key(val date: LocalDate, val teamIds: Set<Long>)
 
-    fun get(date: LocalDate): List<Match>? = matches[date]
+    private val matches = mutableMapOf<Key, List<Match>>()
 
-    fun put(date: LocalDate, value: List<Match>) {
-        matches[date] = value
+    fun get(date: LocalDate, teamIds: Set<Long>): List<Match>? = matches[Key(date, teamIds)]
+
+    fun put(date: LocalDate, teamIds: Set<Long>, value: List<Match>) {
+        matches[Key(date, teamIds)] = value
     }
 }
