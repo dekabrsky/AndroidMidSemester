@@ -12,6 +12,7 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.presentation.details.MatchDetailsDialog
 import io.github.dekabrsky.androidMidSemester.presentation.matches.MatchesScreen
+import io.github.dekabrsky.androidMidSemester.presentation.teams.TeamsScreen
 
 /** Маркер-интерфейс для всех узлов навигации приложения. */
 interface Route
@@ -21,6 +22,9 @@ data object MatchesList : Route
 
 /** Детали матча — показывается в диалоговом окне (DialogSceneStrategy). */
 data class MatchDetails(val match: Match) : Route
+
+/** Выбор команд, матчи которых показывать в списке. Обычный полноэкранный узел. */
+data object TeamsSelection : Route
 
 class Navigator(startDestination: Route) {
     val backStack: SnapshotStateList<Route> = mutableStateListOf(startDestination)
@@ -50,7 +54,11 @@ fun MatchesNavRoot(navigator: Navigator = remember { Navigator(MatchesList) }) {
             entry<MatchesList> {
                 MatchesScreen(
                     onMatchClick = { match -> navigator.goTo(MatchDetails(match)) },
+                    onTeamsClick = { navigator.goTo(TeamsSelection) },
                 )
+            }
+            entry<TeamsSelection> {
+                TeamsScreen(onBack = navigator::goBack)
             }
             entry<MatchDetails>(
                 metadata = DialogSceneStrategy.dialog()
