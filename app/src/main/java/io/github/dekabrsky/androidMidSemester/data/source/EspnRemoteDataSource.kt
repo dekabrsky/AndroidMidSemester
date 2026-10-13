@@ -13,8 +13,11 @@ class EspnRemoteDataSource(
     private val api: EspnApi,
 ) : MatchesRemoteDataSource {
 
-    override suspend fun matchesOn(date: LocalDate): List<Match> =
+    override suspend fun matchesOn(date: LocalDate, teamIds: Set<Long>): List<Match> =
         api.scoreboard(LEAGUE, date.format(DateTimeFormatter.BASIC_ISO_DATE)).toMatches()
+            .filter { match ->
+                teamIds.isEmpty() || match.home.id in teamIds || match.away.id in teamIds
+            }
 
     override suspend fun match(id: Long): Match? =
         api.summary(LEAGUE, id).toMatch()

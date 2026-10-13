@@ -11,10 +11,10 @@ class MatchRepositoryImpl(
     private val cache: MatchesCache,
 ) : MatchRepository {
 
-    override suspend fun matchesOn(date: LocalDate): List<Match> =
-        cache.get(date)
-            ?: remote.matchesOn(date)
-                .also { matches -> cache.put(date, matches) }
+    override suspend fun matchesOn(date: LocalDate, teamIds: Set<Long>): List<Match> =
+        cache.get(date, teamIds)
+            ?: remote.matchesOn(date, teamIds)
+                .also { matches -> cache.put(date, teamIds, matches) }
 
     override suspend fun match(id: Long): Match =
         remote.match(id) ?: throw NoSuchElementException("Матч $id не найден")

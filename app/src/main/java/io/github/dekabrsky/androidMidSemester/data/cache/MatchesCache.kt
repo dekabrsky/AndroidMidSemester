@@ -6,11 +6,13 @@ import java.util.concurrent.ConcurrentHashMap
 
 class MatchesCache {
 
-    private val matchesByDate = ConcurrentHashMap<LocalDate, List<Match>>()
+    private data class Key(val date: LocalDate, val teamIds: Set<Long>)
 
-    fun get(date: LocalDate): List<Match>? = matchesByDate[date]
+    private val matchesByKey = ConcurrentHashMap<Key, List<Match>>()
 
-    fun put(date: LocalDate, matches: List<Match>) {
-        matchesByDate[date] = matches
+    fun get(date: LocalDate, teamIds: Set<Long>): List<Match>? = matchesByKey[Key(date, teamIds)]
+
+    fun put(date: LocalDate, teamIds: Set<Long>, matches: List<Match>) {
+        matchesByKey[Key(date, teamIds)] = matches
     }
 }
