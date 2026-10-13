@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Футбольный дайджест</string>
+    <string name="match_details_title">Детали матча</string>
+    <string name="match_details_score">%1$d : %2$d</string>
+    <string name="match_details_no_score">—</string>
+    <string name="match_details_kickoff">Время начала</string>
+    <string name="match_details_league">Лига</string>
+    <string name="match_details_round">Тур</string>
+    <string name="match_details_close">Закрыть</string>
+    <string name="match_details_unknown">Не указано</string>
+    <string name="match_details_unknown_team">Неизвестная команда</string>
 </resources>
