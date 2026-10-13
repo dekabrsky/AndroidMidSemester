@@ -1,5 +1,7 @@
+
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,9 +41,12 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onSelectTeams: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val selectedTeamNames by
+    viewModel.selectedTeamNames.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -48,6 +54,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onSelectTeams = onSelectTeams,
             )
         },
     ) { innerPadding ->
@@ -57,14 +64,56 @@ fun MatchesScreen(
                 .padding(innerPadding),
         ) {
             when (val current = state) {
-                MatchesUiState.Loading -> LoadingState()
-                is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                MatchesUiState.Loading -> {
+                    LoadingState()
+                }
+
+                is MatchesUiState.Error -> {
+                    ErrorState(message = current.message)
+                }
+
+                is MatchesUiState.Content -> {
+                    // Если команды не выбраны, показываем все матчи.
+                    // Иначе оставляем матчи с участием выбранных команд.
+                    val visibleMatches =
+                        if (selectedTeamNames.isEmpty()) {
+                            current.matches
+                        } else {
+                            current.matches.filter { match ->
+                                match.home.name in selectedTeamNames ||
+                                        match.away.name in selectedTeamNames
+                            }
+                        }
+
+                    if (visibleMatches.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = if (selectedTeamNames.isEmpty()) {
+                                    "На эту дату матчей нет"
+                                } else {
+                                    "Матчей выбранных команд нет"
+                                },
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(16.dp),
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            items(
+                                items = visibleMatches,
+                                key = { it.id },
+                            ) { match ->
+                                MatchListItem(
+                                    match = match,
+                                    onClick = onMatchClick,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -77,6 +126,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onSelectTeams: () -> Unit,
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -86,6 +136,7 @@ private fun MatchesTopBar(
             .windowInsetsPadding(WindowInsets.statusBars)
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         IconButton(onClick = onPreviousDay) {
             Icon(
@@ -93,6 +144,7 @@ private fun MatchesTopBar(
                 contentDescription = "Предыдущий день",
             )
         }
+
         Text(
             text = date?.format(TITLE_DATE_FORMAT) ?: "",
             modifier = Modifier.weight(1f),
@@ -101,11 +153,16 @@ private fun MatchesTopBar(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+
         IconButton(onClick = onNextDay) {
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_right),
                 contentDescription = "Следующий день",
             )
+        }
+
+        TextButton(onClick = onSelectTeams) {
+            Text("Команды")
         }
     }
 }

@@ -2,6 +2,7 @@ package io.github.dekabrsky.androidMidSemester.di
 
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.github.dekabrsky.androidMidSemester.data.api.SStatsApi
+import io.github.dekabrsky.androidMidSemester.data.api.EspnApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -10,6 +11,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+
 
 private const val BASE_URL = "https://api.sstats.net/"
 
@@ -39,4 +41,16 @@ val networkModule = module {
             .build()
     }
     single<SStatsApi> { get<Retrofit>().create(SStatsApi::class.java) }
+    single<EspnApi> {
+        Retrofit.Builder()
+            .baseUrl("https://site.api.espn.com/")
+            .client(get())
+            .addConverterFactory(
+                get<Json>().asConverterFactory(
+                    "application/json".toMediaType()
+                )
+            )
+            .build()
+            .create(EspnApi::class.java)
+    }
 }
