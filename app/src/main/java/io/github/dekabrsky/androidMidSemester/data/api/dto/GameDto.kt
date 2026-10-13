@@ -16,12 +16,6 @@ data class GameDto(
 )
 
 @Serializable
-data class TeamDto(
-    val id: Long,
-    val name: String,
-)
-
-@Serializable
 data class SeasonDto(
     val league: LeagueDto,
 )
