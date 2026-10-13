@@ -1,5 +1,6 @@
 package io.github.dekabrsky.androidMidSemester.data.api
 
+import io.github.dekabrsky.androidMidSemester.data.api.dto.TeamDto
 import io.github.dekabrsky.androidMidSemester.data.api.dto.GameDto
 import io.github.dekabrsky.androidMidSemester.data.api.dto.ListEnvelope
 import io.github.dekabrsky.androidMidSemester.data.api.dto.SingleEnvelope
@@ -15,4 +16,11 @@ interface SStatsApi {
 
     @GET("Games/{id}")
     suspend fun game(@Path("id") id: Long): SingleEnvelope<GameDto>
+
+    @GET("Teams/list")
+    suspend fun teams(
+        @Query("Country") country: String,
+        @Query("Offset") offset: Int = 0,
+        @Query("Limit") limit: Int = 50,
+    ): ListEnvelope<TeamDto>
 }

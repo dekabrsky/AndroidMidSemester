@@ -38,6 +38,7 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onTeamSelectionClick: () -> Unit,   // <-- НОВЫЙ ПАРАМЕТР
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +49,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onTeamSelectionClick = onTeamSelectionClick,   // <-- ПРОКИДЫВАЕМ
             )
         },
     ) { innerPadding ->
@@ -77,6 +79,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onTeamSelectionClick: () -> Unit,   // <-- НОВЫЙ ПАРАМЕТР
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -105,6 +108,12 @@ private fun MatchesTopBar(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_right),
                 contentDescription = "Следующий день",
+            )
+        }
+        IconButton(onClick = onTeamSelectionClick) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_right),   // временно, заменим на иконку фильтра
+                contentDescription = "Выбор команд",
             )
         }
     }
