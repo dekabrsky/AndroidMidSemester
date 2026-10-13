@@ -1,6 +1,7 @@
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,17 +40,32 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onTeamsClick: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val selectedTeamIds by viewModel.selectedTeamIds.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
-            MatchesTopBar(
-                state = state,
-                onPreviousDay = viewModel::previousDay,
-                onNextDay = viewModel::nextDay,
-            )
+            Column {
+                MatchesTopBar(
+                    state = state,
+                    onPreviousDay = viewModel::previousDay,
+                    onNextDay = viewModel::nextDay,
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = if (selectedTeamIds.isEmpty()) "Все команды из списка" else "Выбрано: ${selectedTeamIds.size}",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    TextButton(onClick = onTeamsClick) { Text("Выбрать команды") }
+                }
+            }
         },
     ) { innerPadding ->
         Box(
@@ -59,12 +76,23 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
+                is MatchesUiState.Content -> {
+                    if (current.matches.isEmpty()) {
+                        Text(
+                            text = if (selectedTeamIds.isEmpty()) {
+                                "Матчей команд из списка на эту дату нет"
+                            } else {
+                                "Матчи выбранных команд на эту дату не найдены"
+                            },
+                            modifier = Modifier.align(Alignment.Center).padding(24.dp),
+                            textAlign = TextAlign.Center,
                         )
+                    } else {
+                        LazyColumn {
+                            items(current.matches, key = { it.id }) { match ->
+                                MatchListItem(match = match, onClick = onMatchClick)
+                            }
+                        }
                     }
                 }
             }
