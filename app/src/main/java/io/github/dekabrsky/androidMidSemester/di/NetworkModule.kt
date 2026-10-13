@@ -8,6 +8,8 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import io.github.dekabrsky.androidMidSemester.data.api.EspnApi
+import org.koin.core.qualifier.named
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
@@ -39,4 +41,14 @@ val networkModule = module {
             .build()
     }
     single<SStatsApi> { get<Retrofit>().create(SStatsApi::class.java) }
+    single(named("espn")) {
+        Retrofit.Builder()
+            .baseUrl("https://site.api.espn.com/")
+            .client(get())
+            .addConverterFactory(
+                get<Json>().asConverterFactory("application/json".toMediaType())
+            )
+            .build()
+    }
+    single { get<Retrofit>(named("espn")).create(EspnApi::class.java) }
 }
