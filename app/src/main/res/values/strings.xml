@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Футбольный дайджест</string>
+    <string name="match_details_title">Детали матча</string>
+    <string name="match_details_finished">Матч завершён</string>
+    <string name="match_details_current_score">Текущий счёт</string>
+    <string name="match_details_not_started">Матч не начался</string>
+    <string name="match_details_date">Дата</string>
+    <string name="match_details_kickoff">Начало</string>
+    <string name="match_details_league">Лига</string>
+    <string name="match_details_round">Тур</string>
+    <string name="match_details_close">Закрыть</string>
+    <string name="match_details_team_logo">Логотип команды %1$s</string>
 </resources>
