@@ -1,6 +1,7 @@
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.dekabrsky.androidMidSemester.R
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
+import io.github.dekabrsky.androidMidSemester.presentation.ui.common.EmptyState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.ErrorState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.LoadingState
 import org.koin.androidx.compose.koinViewModel
@@ -38,6 +41,7 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onTeamsClick: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -50,6 +54,11 @@ fun MatchesScreen(
                 onNextDay = viewModel::nextDay,
             )
         },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(onClick = onTeamsClick) {
+                Text("Команды")
+            }
+        },
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -59,12 +68,16 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                is MatchesUiState.Content -> if (current.matches.isEmpty()) {
+                    EmptyState(message = "Матчей нет")
+                } else {
+                    LazyColumn(contentPadding = PaddingValues(bottom = 88.dp)) {
+                        items(current.matches, key = { it.id }) { match ->
+                            MatchListItem(
+                                match = match,
+                                onClick = onMatchClick,
+                            )
+                        }
                     }
                 }
             }

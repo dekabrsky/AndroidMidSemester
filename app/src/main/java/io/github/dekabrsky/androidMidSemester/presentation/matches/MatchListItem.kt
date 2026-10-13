@@ -5,18 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import io.github.dekabrsky.androidMidSemester.R
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
+import io.github.dekabrsky.androidMidSemester.presentation.ui.common.TeamLogo
 
 @Composable
 fun MatchListItem(
@@ -65,19 +62,4 @@ fun MatchListItem(
             teamName = match.away.name,
         )
     }
-}
-
-@Composable
-private fun TeamLogo(
-    logoUrl: String?,
-    teamName: String,
-    modifier: Modifier = Modifier,
-) {
-    AsyncImage(
-        model = logoUrl,
-        contentDescription = teamName,
-        modifier = modifier.size(48.dp),
-        placeholder = painterResource(R.drawable.ic_team_placeholder),
-        error = painterResource(R.drawable.ic_team_placeholder),
-    )
 }
