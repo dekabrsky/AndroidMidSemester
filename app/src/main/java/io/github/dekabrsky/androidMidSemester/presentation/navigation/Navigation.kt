@@ -12,12 +12,15 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.presentation.details.MatchDetailsDialog
 import io.github.dekabrsky.androidMidSemester.presentation.matches.MatchesScreen
+import io.github.dekabrsky.androidMidSemester.presentation.selection.TeamSelectionScreen
 
 /** Маркер-интерфейс для всех узлов навигации приложения. */
 interface Route
 
 /** Список матчей — стартовый узел. */
 data object MatchesList : Route
+
+data object TeamSelection : Route
 
 /** Детали матча — показывается в диалоговом окне (DialogSceneStrategy). */
 data class MatchDetails(val match: Match) : Route
@@ -50,7 +53,11 @@ fun MatchesNavRoot(navigator: Navigator = remember { Navigator(MatchesList) }) {
             entry<MatchesList> {
                 MatchesScreen(
                     onMatchClick = { match -> navigator.goTo(MatchDetails(match)) },
+                    onFilterClick = { navigator.goTo(TeamSelection) }
                 )
+            }
+            entry<TeamSelection> {
+                TeamSelectionScreen(onBack = navigator::goBack)
             }
             entry<MatchDetails>(
                 metadata = DialogSceneStrategy.dialog()

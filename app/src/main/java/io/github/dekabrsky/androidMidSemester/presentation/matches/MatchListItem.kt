@@ -68,7 +68,7 @@ fun MatchListItem(
 }
 
 @Composable
-private fun TeamLogo(
+fun TeamLogo(
     logoUrl: String?,
     teamName: String,
     modifier: Modifier = Modifier,

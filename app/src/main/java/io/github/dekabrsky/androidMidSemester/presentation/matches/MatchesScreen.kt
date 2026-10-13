@@ -38,6 +38,7 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onFilterClick: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +49,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onFilterClick = onFilterClick
             )
         },
     ) { innerPadding ->
@@ -77,6 +79,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onFilterClick: () -> Unit, // <-- Новый параметр
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -88,24 +91,20 @@ private fun MatchesTopBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onPreviousDay) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_left),
-                contentDescription = "Предыдущий день",
-            )
+            Text("◀", style = MaterialTheme.typography.titleLarge) // Стрелка влево
         }
         Text(
-            text = date?.format(TITLE_DATE_FORMAT) ?: "",
+            text = date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: "",
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
         IconButton(onClick = onNextDay) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_right),
-                contentDescription = "Следующий день",
-            )
+            Text("▶", style = MaterialTheme.typography.titleLarge) // Стрелка вправо
+        }
+        // <-- Кнопка фильтра
+        IconButton(onClick = onFilterClick) {
+            Text("🔽", style = MaterialTheme.typography.titleLarge) // Иконка воронки/настроек
         }
     }
 }
