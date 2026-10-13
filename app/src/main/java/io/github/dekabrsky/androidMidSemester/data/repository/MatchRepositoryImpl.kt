@@ -1,8 +1,7 @@
 package io.github.dekabrsky.androidMidSemester.data.repository
 
-import io.github.dekabrsky.androidMidSemester.data.api.SStatsApi
 import io.github.dekabrsky.androidMidSemester.data.cache.MatchesMemoryCache
-import io.github.dekabrsky.androidMidSemester.data.mapper.toMatch
+import io.github.dekabrsky.androidMidSemester.data.source.MatchesRemoteDataSource
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
 import io.github.dekabrsky.androidMidSemester.domain.repository.MatchRepository
 import kotlinx.coroutines.sync.Mutex
@@ -10,7 +9,7 @@ import kotlinx.coroutines.sync.withLock
 import java.time.LocalDate
 
 class MatchRepositoryImpl(
-    private val api: SStatsApi,
+    private val remoteSource: MatchesRemoteDataSource,
     private val cache: MatchesMemoryCache,
 ) : MatchRepository {
     private val loadMutex = Mutex()
@@ -21,12 +20,12 @@ class MatchRepositoryImpl(
         return loadMutex.withLock {
             cache.get(date)?.let { return@withLock it }
 
-            val matches = api.gamesOn(date.toString()).data.map { it.toMatch() }
+            val matches = remoteSource.matchesOn(date)
             cache.put(date, matches)
             matches
         }
     }
 
     override suspend fun match(id: Long): Match =
-        api.game(id).data?.toMatch() ?: throw NoSuchElementException("Матч $id не найден")
+        remoteSource.match(id)
 }
