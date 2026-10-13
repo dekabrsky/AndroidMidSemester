@@ -1,3 +1,37 @@
 <resources>
     <string name="app_name">Футбольный дайджест</string>
+    <string name="match_details_title">Детали матча</string>
+    <string name="match_details_score">%1$d : %2$d</string>
+    <string name="match_details_no_score">—</string>
+    <string name="match_details_kickoff">Время начала</string>
+    <string name="match_details_league">Лига</string>
+    <string name="match_details_round">Тур</string>
+    <string name="match_details_close">Закрыть</string>
+    <string name="match_details_unknown">Не указано</string>
+    <string name="match_details_unknown_team">Неизвестная команда</string>
+    <string name="teams_open">Команды</string>
+    <string name="teams_title">Команды</string>
+    <string name="teams_back">Назад</string>
+    <string name="teams_reset">Сбросить</string>
+    <string name="teams_all_hint">Выберите команды из любых стран. Фильтр страны на главном экране применяется отдельно.</string>
+    <string name="teams_selected_count">Выбрано команд: %1$d</string>
+    <string name="teams_search">Поиск команды</string>
+    <string name="teams_retry">Повторить</string>
+    <string name="teams_empty">Команды не найдены</string>
+    <string name="matches_empty_day">На эту дату матчей нет</string>
+    <string name="matches_empty_selected">На эту дату нет матчей выбранных команд</string>
+    <string name="teams_selected">Выбранные</string>
+    <string name="teams_no_selection">Вы пока не выбрали команды</string>
+    <string name="teams_country">Страна команд</string>
+    <string name="teams_country_search">Поиск страны</string>
+    <string name="teams_countries_empty">Страны не найдены</string>
+    <string name="matches_country_open">Страна</string>
+    <string name="matches_country_value">Страна: %1$s</string>
+    <string name="matches_country_clear">Без фильтра страны</string>
+    <string name="matches_empty_filtered">На эту дату нет матчей по выбранным фильтрам</string>
+    <string name="error_title">Не удалось загрузить данные</string>
+    <string name="error_connection">Не удалось подключиться к серверу. Проверьте интернет и повторите попытку.</string>
+    <string name="error_timeout">Сервер не ответил вовремя. Попробуйте ещё раз.</string>
+    <string name="error_network">Соединение прервано. Проверьте интернет и повторите попытку.</string>
+    <string name="error_loading">Не удалось получить данные. Попробуйте ещё раз позже.</string>
 </resources>
