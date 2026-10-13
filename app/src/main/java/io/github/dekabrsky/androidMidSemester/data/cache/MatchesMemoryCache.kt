@@ -1,0 +1,19 @@
+package io.github.dekabrsky.androidMidSemester.data.cache
+
+import io.github.dekabrsky.androidMidSemester.domain.model.Match
+import java.time.LocalDate
+import java.util.concurrent.ConcurrentHashMap
+
+class MatchesMemoryCache {
+    private val storage = ConcurrentHashMap<LocalDate, List<Match>>()
+
+    fun get(date: LocalDate): List<Match>? = storage[date]
+
+    fun put(date: LocalDate, matches: List<Match>) {
+        storage[date] = matches
+    }
+
+    fun clear() {
+        storage.clear()
+    }
+}

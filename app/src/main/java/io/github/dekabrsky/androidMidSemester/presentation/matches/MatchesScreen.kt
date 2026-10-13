@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.dekabrsky.androidMidSemester.R
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
+import io.github.dekabrsky.androidMidSemester.presentation.ui.common.EmptyState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.ErrorState
 import io.github.dekabrsky.androidMidSemester.presentation.ui.common.LoadingState
 import org.koin.androidx.compose.koinViewModel
@@ -38,6 +40,7 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onSelectTeamsClick: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +51,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onSelectTeamsClick = onSelectTeamsClick,
             )
         },
     ) { innerPadding ->
@@ -59,12 +63,18 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                is MatchesUiState.Content -> {
+                    if (current.matches.isEmpty()) {
+                        EmptyState(message = "На этот день матчей нет")
+                    } else {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(current.matches, key = { it.id }) { match ->
+                                MatchListItem(
+                                    match = match,
+                                    onClick = onMatchClick,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -77,6 +87,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onSelectTeamsClick: () -> Unit,
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -106,6 +117,9 @@ private fun MatchesTopBar(
                 painter = painterResource(R.drawable.ic_arrow_right),
                 contentDescription = "Следующий день",
             )
+        }
+        TextButton(onClick = onSelectTeamsClick) {
+            Text(text = "Команды")
         }
     }
 }
