@@ -10,11 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import io.github.dekabrsky.androidMidSemester.R
+
 
 @Composable
 fun ErrorState(
     message: String,
     modifier: Modifier = Modifier,
+    onRetry: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -24,13 +30,18 @@ fun ErrorState(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Ошибка",
+            //text = "Ошибка",
+            text = stringResource(R.string.error_title),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 8.dp),
+            textAlign = TextAlign.Center,
         )
+        onRetry?.let { retry ->
+            TextButton(onClick = retry) { Text(stringResource(R.string.teams_retry)) }
+        }
     }
 }
