@@ -1,6 +1,9 @@
+
 package io.github.dekabrsky.androidMidSemester.presentation.matches
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,22 +37,39 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 private val TITLE_DATE_FORMAT =
-    DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.forLanguageTag("ru"))
+    DateTimeFormatter.ofPattern(
+        "d MMMM yyyy",
+        Locale.forLanguageTag("ru")
+    )
 
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onChooseTeams: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
-            MatchesTopBar(
-                state = state,
-                onPreviousDay = viewModel::previousDay,
-                onNextDay = viewModel::nextDay,
-            )
+            Column {
+                MatchesTopBar(
+                    state = state,
+                    onPreviousDay = viewModel::previousDay,
+                    onNextDay = viewModel::nextDay,
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onChooseTeams) {
+                        Text("Выбрать команды")
+                    }
+                }
+            }
         },
     ) { innerPadding ->
         Box(
@@ -57,14 +78,25 @@ fun MatchesScreen(
                 .padding(innerPadding),
         ) {
             when (val current = state) {
-                MatchesUiState.Loading -> LoadingState()
-                is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                MatchesUiState.Loading -> {
+                    LoadingState()
+                }
+
+                is MatchesUiState.Error -> {
+                    ErrorState(message = current.message)
+                }
+
+                is MatchesUiState.Content -> {
+                    LazyColumn {
+                        items(
+                            items = current.matches,
+                            key = { it.id }
+                        ) { match ->
+                            MatchListItem(
+                                match = match,
+                                onClick = onMatchClick,
+                            )
+                        }
                     }
                 }
             }
@@ -84,15 +116,21 @@ private fun MatchesTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.statusBars)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(
+                horizontal = 8.dp,
+                vertical = 4.dp
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onPreviousDay) {
             Icon(
-                painter = painterResource(R.drawable.ic_arrow_left),
+                painter = painterResource(
+                    R.drawable.ic_arrow_left
+                ),
                 contentDescription = "Предыдущий день",
             )
         }
+
         Text(
             text = date?.format(TITLE_DATE_FORMAT) ?: "",
             modifier = Modifier.weight(1f),
@@ -101,9 +139,12 @@ private fun MatchesTopBar(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+
         IconButton(onClick = onNextDay) {
             Icon(
-                painter = painterResource(R.drawable.ic_arrow_right),
+                painter = painterResource(
+                    R.drawable.ic_arrow_right
+                ),
                 contentDescription = "Следующий день",
             )
         }
