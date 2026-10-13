@@ -18,4 +18,8 @@ class MatchesMemoryCache {
             matchesByDate[date] = matches
         }
     }
+
+    suspend fun findMatch(id: Long): Match? = mutex.withLock {
+        matchesByDate.values.asSequence().flatten().firstOrNull { it.id == id }
+    }
 }
