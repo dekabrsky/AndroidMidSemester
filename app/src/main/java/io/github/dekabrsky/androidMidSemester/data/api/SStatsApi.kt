@@ -3,6 +3,7 @@ package io.github.dekabrsky.androidMidSemester.data.api
 import io.github.dekabrsky.androidMidSemester.data.api.dto.GameDto
 import io.github.dekabrsky.androidMidSemester.data.api.dto.ListEnvelope
 import io.github.dekabrsky.androidMidSemester.data.api.dto.SingleEnvelope
+import io.github.dekabrsky.androidMidSemester.data.api.dto.TeamsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -15,4 +16,9 @@ interface SStatsApi {
 
     @GET("Games/{id}")
     suspend fun game(@Path("id") id: Long): SingleEnvelope<GameDto>
+
+    @GET("Teams/list")
+    suspend fun teamsByCountry(
+        @Query("Country") country: String,
+    ): TeamsResponseDto
 }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +40,7 @@ private val TITLE_DATE_FORMAT =
 @Composable
 fun MatchesScreen(
     onMatchClick: (Match) -> Unit,
+    onOpenTeams: () -> Unit,
     viewModel: MatchesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +51,7 @@ fun MatchesScreen(
                 state = state,
                 onPreviousDay = viewModel::previousDay,
                 onNextDay = viewModel::nextDay,
+                onOpenTeams = onOpenTeams,
             )
         },
     ) { innerPadding ->
@@ -59,12 +63,26 @@ fun MatchesScreen(
             when (val current = state) {
                 MatchesUiState.Loading -> LoadingState()
                 is MatchesUiState.Error -> ErrorState(message = current.message)
-                is MatchesUiState.Content -> LazyColumn {
-                    items(current.matches, key = { it.id }) { match ->
-                        MatchListItem(
-                            match = match,
-                            onClick = onMatchClick,
-                        )
+                is MatchesUiState.Content -> {
+                    if (current.matches.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "На эту дату матчей нет",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    } else {
+                        LazyColumn {
+                            items(current.matches, key = { it.id }) { match ->
+                                MatchListItem(
+                                    match = match,
+                                    onClick = onMatchClick,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -77,6 +95,7 @@ private fun MatchesTopBar(
     state: MatchesUiState,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    onOpenTeams: () -> Unit,
 ) {
     val date = (state as? MatchesUiState.Content)?.date
 
@@ -101,6 +120,12 @@ private fun MatchesTopBar(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        IconButton(onClick = onOpenTeams) {
+            Icon(
+                imageVector = Icons.Default.FilterList,
+                contentDescription = "Команды",
+            )
+        }
         IconButton(onClick = onNextDay) {
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_right),
