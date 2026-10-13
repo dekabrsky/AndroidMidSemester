@@ -1,5 +1,6 @@
 package io.github.dekabrsky.androidMidSemester.data.repository
 
+import io.github.dekabrsky.androidMidSemester.data.MatchCache
 import io.github.dekabrsky.androidMidSemester.data.api.SStatsApi
 import io.github.dekabrsky.androidMidSemester.data.mapper.toMatch
 import io.github.dekabrsky.androidMidSemester.domain.model.Match
@@ -8,11 +9,27 @@ import java.time.LocalDate
 
 class MatchRepositoryImpl(
     private val api: SStatsApi,
+    private val cache: MatchCache,
 ) : MatchRepository {
 
-    override suspend fun matchesOn(date: LocalDate): List<Match> =
-        api.gamesOn(date.toString()).data.map { it.toMatch() }
+    override suspend fun matchesOn(date: LocalDate): List<Match> {
+        // Если данные уже есть, возвращаем их без обращения к API
+        cache.get(date)?.let { cachedMatches ->
+            return cachedMatches
+        }
+
+        // Если данных нет, запрашиваем их у API
+        val matches = api.gamesOn(date.toString())
+            .data
+            .map { it.toMatch() }
+
+        // Сохраняем только успешно полученный результат
+        cache.put(date, matches)
+
+        return matches
+    }
 
     override suspend fun match(id: Long): Match =
-        api.game(id).data?.toMatch() ?: throw NoSuchElementException("Матч $id не найден")
+        api.game(id).data?.toMatch()
+            ?: throw NoSuchElementException("Матч $id не найден")
 }
